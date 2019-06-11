@@ -1,0 +1,23 @@
+{
+  "name": "graphql-express-mongo",
+  "version": "1.0.0",
+  "description": "GraphQL with express and Mongo as DB and React as Front end",
+  "main": "app.js",
+  "scripts": {
+    "test": "nodemon app.js"
+  },
+  "keywords": [
+    "GraphQL",
+    "Mongo",
+    "Express",
+    "React"
+  ],
+  "author": "Gokul Rajasekhar",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "express-graphql": "^0.8.0",
+    "graphql": "^14.3.1"
+  }
+}
