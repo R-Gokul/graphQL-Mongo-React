@@ -19,6 +19,10 @@ let eventSchema =  new Schema({
     date : {
         type: Date,
         require: true
+    },
+    creator: {
+        type: Schema.Types.ObjectId,
+        require: true
     }
 });
 
