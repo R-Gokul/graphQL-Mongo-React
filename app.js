@@ -10,6 +10,19 @@ const User  = require("./models/user");
 
 const app = express();
 
+const user = userId => {
+    //console.log(userId);
+   return User.findById(userId).then(u =>{
+        return {
+            ...u._doc,
+            id : u._doc._id.toString(),
+            password: "*****"
+        }
+   }).catch(err=>{
+       throw err;
+   })
+}
+
 app.use(bodyParser.json());
 
 app.get("/", (req, res, next)=>{
@@ -24,12 +37,14 @@ app.use("/graphql", graphqlHttp({
             description: String!
             price: Float!
             date: String!
+            creator: User!
         }
 
         type User {
             _id: ID
             email: String!
             password: String
+            createdEvents:[Event!]
         }
 
         input EventInput {
@@ -61,7 +76,7 @@ app.use("/graphql", graphqlHttp({
         events: () =>{
             return Events.find().then(events => {
                 return events.map(e =>{
-                    return  {...e._doc,  _id: e._doc._id.toString()}
+                    return  {...e._doc,  _id: e._doc._id.toString(), creator: user.bind(this, e._doc.creator)}
                 });
             }).catch(err =>{
                 throw err
@@ -79,27 +94,31 @@ app.use("/graphql", graphqlHttp({
                 date: new Date(args.eventInput.date),
                 creator: "5d204a5559408c1214df10e6"
             });
-            event.save().then(result=>{
-                let createdEvent= {...result._doc, _id:result._doc._id.toString()}
-                return User.findById("5d204a5559408c1214df10e6").then(user=>{
+            let createdEvent;
+            return event.save()
+                .then(result => {
+                    createdEvent = {...result._doc,
+                     _id:result._doc._id.toString(), 
+                     creator: user.bind(this, result._doc.creator)}
+                return User.findById("5d204a5559408c1214df10e6");
+                })
+                .then(user=>{
+                    //console.log(user)
+                    //console.log("CE", createdEvent)
                     if(!user){
                         throw new Error("User Does Not Exisit");
                     }
                     user.createdEvents.push(event);
                     //console.log("user", user)
-                    return user.save().then(result=> {
-                        //console.log(result);
-                        return createdEvent;
-                    })
-                });
-                
+                    return user.save();
+                }).then(()=>{
+                    //console.log("CE", createdEvent)
+                    return createdEvent;
                 //console.log("R", result);
             }).catch(err => {
                 console.log(err);
                 throw err;
-            })
-
-            return event
+            });
         },
         createUser: (args) =>{
             console.log(args);

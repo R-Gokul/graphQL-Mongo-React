@@ -22,7 +22,7 @@ let eventSchema =  new Schema({
     },
     creator: {
         type: Schema.Types.ObjectId,
-        require: true
+        ref: 'User'
     }
 });
 
