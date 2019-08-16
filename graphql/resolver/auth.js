@@ -1,5 +1,6 @@
 const bycript = require("bcryptjs");
 const User = require("../../models/user");
+const jwt = require("jsonwebtoken");
 
 module.exports = {
     createUser: async (args) => {
@@ -20,6 +21,25 @@ module.exports = {
         } catch (err) {
             console.log(err);
             throw err;
+        }
+    },
+    login : async ({email, password}) =>{
+        let user = await User.findOne({email: email});
+        if(!user){
+            throw new Error("User Dose not exisit");
+        } 
+        let isMatch = await bycript.compare(password, user.password);
+        if(!isMatch){
+            throw new Error("User name and password dose not match.");
+        }
+        let token = jwt.sign({userId: user.id, expireOn: 1}, "thisisSecretKey",{
+            expiresIn:'1h'
+        })
+
+        return {
+            userId : user.id,
+            token : token,
+            expireOn: 1
         }
     }
 }

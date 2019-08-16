@@ -3,7 +3,11 @@ const Event = require("../../models/event");
 const {transformBooking, transformEvent} = require("./helper");
 
 module.exports = {
-    booking: async () => {
+    booking: async (args, req) => {
+        if(!req.isAuth){
+            throw new Error("Unauthorised");
+        }
+
         try {
             const bookings = await Booking.find();
             return bookings.map(booking => {
@@ -14,7 +18,10 @@ module.exports = {
             throw error;
         }
     },
-    bookEvent: async args => {
+    bookEvent: async (args, req) => {
+        if(!req.isAuth){
+            throw new Error("Unauthorised");
+        }
         const fetchEvent = await Event.findOne({_id: args.eventId});
         const booking = new Booking({
             user: "5d204a5559408c1214df10e6",
@@ -23,7 +30,10 @@ module.exports = {
         const result = await booking.save();
         return transformBooking(result); 
     },
-    cancelBooking: async args => {
+    cancelBooking: async (args, req) => {
+        if(!req.isAuth){
+            throw new Error("Unauthorised");
+        }
         const booking = await Booking.findById(args.bookingId).populate('event');
         if (!booking) {
             throw new Error("Booking ID does not exisit");

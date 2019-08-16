@@ -14,8 +14,12 @@ module.exports = {
             throw err;
         }
     },
-    createEvent: async (args) => {
+    createEvent: async (args, req) => {
         // console.log(args.eventInput);
+        if(!req.isAuth){
+            throw new Error("Unauthorised");
+        }
+
         try {
             const event = new Event({
                 title: args.eventInput.title,
