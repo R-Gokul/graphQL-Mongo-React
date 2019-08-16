@@ -4,11 +4,11 @@ const Schema  = mongoos.Schema;
 const booking = new Schema({
         event: {
             type: Schema.Types.ObjectId,
-            reff: 'Event'
+            ref: 'Event'
         },
         user: {
             type: Schema.Types.ObjectId,
-            reff: 'User'
+            ref: 'User'
         }
     },
     {
